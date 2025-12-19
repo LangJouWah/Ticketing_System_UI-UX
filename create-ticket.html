@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Ticket - Helport</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="navbar-brand">Helport</a>
+            <div class="navbar-nav">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="create-ticket.html" class="nav-link active">Create Ticket</a>
+                <a href="view-tickets.html" class="nav-link">View Tickets</a>
+                <a href="admin/login.html" class="nav-link">Admin Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container" style="padding: 3rem 0;">
+        <div class="fade-in">
+            <div style="text-align: center; margin-bottom: 3rem;">
+                <h1>Create Support Ticket</h1>
+                <p class="text-muted">Fill out the form below to submit your support request</p>
+            </div>
+
+            <div class="card" style="max-width: 800px; margin: 0 auto;">
+                <div class="card-header">
+                    <h3><i class="fas fa-ticket-alt"></i> Ticket Information</h3>
+                </div>
+                <div class="card-body">
+                    <form id="ticketForm">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i> All fields marked with * are required
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+                            <div class="form-group">
+                                <label for="name" class="form-label">* Your Name</label>
+                                <input type="text" id="name" class="form-control" placeholder="John Doe" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="email" class="form-label">* Email Address</label>
+                                <input type="email" id="email" class="form-control" placeholder="john@example.com" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="department" class="form-label">* Department</label>
+                            <select id="department" class="form-select" required>
+                                <option value="">Select Department</option>
+                                <option value="technical">Technical Support</option>
+                                <option value="billing">Billing Department</option>
+                                <option value="general">General Inquiry</option>
+                                <option value="sales">Sales Team</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="subject" class="form-label">* Subject</label>
+                            <input type="text" id="subject" class="form-control" placeholder="Brief description of your issue" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="description" class="form-label">* Issue Description</label>
+                            <textarea id="description" class="form-control" placeholder="Please describe your issue in detail..." required></textarea>
+                            <div style="display: flex; justify-content: space-between; margin-top: 0.5rem;">
+                                <small class="text-muted">Be as detailed as possible</small>
+                                <small class="text-muted">Characters: <span id="charCount">0</span></small>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Priority Level</label>
+                            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                    <input type="radio" name="priority" value="low" checked>
+                                    <span class="badge badge-success">Low</span>
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                    <input type="radio" name="priority" value="medium">
+                                    <span class="badge badge-warning">Medium</span>
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                    <input type="radio" name="priority" value="high">
+                                    <span class="badge badge-danger">High</span>
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                    <input type="radio" name="priority" value="urgent">
+                                    <span class="badge" style="background: rgba(255, 0, 0, 0.2); color: #ff8a80; border: 1px solid #ff8a80;">Urgent</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Attach Files (Optional)</label>
+                            <div class="file-upload" id="fileUpload">
+                                <i class="fas fa-cloud-upload-alt" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+                                <p>Click to upload or drag and drop</p>
+                                <p class="text-muted" style="font-size: 0.875rem;">Max file size: 10MB • Supported: PDF, JPG, PNG, DOC</p>
+                                <input type="file" id="fileInput" style="display: none;" multiple>
+                            </div>
+                            <div id="fileList" style="margin-top: 1rem;"></div>
+                        </div>
+
+                        <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane"></i> Submit Ticket
+                            </button>
+                            <button type="button" class="btn btn-outline" onclick="resetForm()">
+                                <i class="fas fa-redo"></i> Reset Form
+                            </button>
+                            <a href="index.html" class="btn btn-outline">
+                                <i class="fas fa-times"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 3rem;">
+                <p class="text-muted">
+                    <i class="fas fa-clock"></i> Average response time: 2-4 hours
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div style="text-align: center;">
+                <p>&copy; 2024 Helport. All rights reserved.</p>
+                <p class="text-muted" style="font-size: 0.875rem;">
+                    <i class="fas fa-shield-alt"></i> Your information is secure and encrypted
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/script.js"></script>
+</body>
+</html>

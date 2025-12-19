@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Helport</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .login-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #0a1929 0%, #071422 100%);
+            padding: 2rem;
+        }
+        
+        .login-card {
+            width: 100%;
+            max-width: 450px;
+            background: #132f4c;
+            border-radius: 20px;
+            border: 1px solid #1e4976;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        }
+        
+        .login-header {
+            padding: 2.5rem;
+            text-align: center;
+            background: linear-gradient(135deg, #00b248 0%, #008b3a 100%);
+            color: white;
+        }
+        
+        .login-body {
+            padding: 2.5rem;
+        }
+        
+        .login-logo {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .credential-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #1e4976;
+        }
+        
+        .credential-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+        }
+        
+        .credential-item strong {
+            color: #69f0ae;
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-page">
+        <div class="login-card fade-in">
+            <div class="login-header">
+                <div class="login-logo">💚</div>
+                <h2>Helport Admin</h2>
+                <p>Department Login Portal</p>
+            </div>
+            
+            <div class="login-body">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i> Please login with your department credentials
+                </div>
+                
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="username" class="form-label">
+                            <i class="fas fa-user"></i> Username
+                        </label>
+                        <input type="text" id="username" class="form-control" placeholder="Enter username" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password" class="form-label">
+                            <i class="fas fa-lock"></i> Password
+                        </label>
+                        <input type="password" id="password" class="form-control" placeholder="Enter password" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 1rem;">
+                        <i class="fas fa-sign-in-alt"></i> Login to Dashboard
+                    </button>
+                </form>
+                
+                <div class="credential-grid">
+                    <div class="credential-item">
+                        <strong>Admin</strong>
+                        admin / admin123
+                    </div>
+                    <div class="credential-item">
+                        <strong>Tech Support</strong>
+                        tech_support / dept123
+                    </div>
+                    <div class="credential-item">
+                        <strong>Billing</strong>
+                        billing / dept123
+                    </div>
+                    <div class="credential-item">
+                        <strong>General</strong>
+                        general / dept123
+                    </div>
+                    <div class="credential-item">
+                        <strong>Sales</strong>
+                        sales / dept123
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin-top: 2rem;">
+                    <a href="../index.html" class="btn btn-outline" style="width: 100%;">
+                        <i class="fas fa-arrow-left"></i> Back to Public Site
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            const credentials = {
+                'admin': 'admin123',
+                'tech_support': 'dept123',
+                'billing': 'dept123',
+                'general': 'dept123',
+                'sales': 'dept123'
+            };
+            
+            if (credentials[username] && credentials[username] === password) {
+                // Show loading
+                const btn = this.querySelector('button');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+                btn.disabled = true;
+                
+                // Simulate login delay
+                setTimeout(() => {
+                    // Store login info
+                    localStorage.setItem('adminLoggedIn', 'true');
+                    localStorage.setItem('adminUser', username);
+                    localStorage.setItem('adminRole', username === 'admin' ? 'admin' : 'department');
+                    
+                    // Show success message
+                    const alert = document.createElement('div');
+                    alert.className = 'alert alert-success';
+                    alert.innerHTML = `<i class="fas fa-check-circle"></i> Login successful! Redirecting...`;
+                    document.querySelector('.login-body').prepend(alert);
+                    
+                    // Redirect
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1000);
+                }, 1500);
+            } else {
+                const alert = document.createElement('div');
+                alert.className = 'alert alert-danger';
+                alert.innerHTML = `<i class="fas fa-exclamation-circle"></i> Invalid username or password`;
+                document.querySelector('.login-body').prepend(alert);
+                
+                setTimeout(() => alert.remove(), 3000);
+            }
+        });
+        
+        // Auto-fill demo credentials on click
+        document.querySelectorAll('.credential-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const text = this.textContent;
+                const [role, creds] = text.split('\n');
+                const [user, pass] = creds.split(' / ');
+                
+                document.getElementById('username').value = user.trim();
+                document.getElementById('password').value = pass.trim();
+                
+                // Show confirmation
+                const alert = document.createElement('div');
+                alert.className = 'alert alert-info';
+                alert.innerHTML = `<i class="fas fa-check"></i> Filled ${role.trim()} credentials`;
+                document.querySelector('.login-body').prepend(alert);
+                
+                setTimeout(() => alert.remove(), 2000);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Helport</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .admin-header {
+            background: linear-gradient(135deg, #132f4c 0%, #1e4976 100%);
+            padding: 1.5rem 0;
+            border-bottom: 1px solid #1e4976;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 1rem;
+            background: rgba(0, 200, 83, 0.1);
+            border-radius: 8px;
+            border: 1px solid #00c853;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .stat-card {
+            background: #132f4c;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            border: 1px solid #1e4976;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: #00c853;
+        }
+        
+        .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #69f0ae 0%, #00c853 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .department-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .dept-tab {
+            padding: 0.5rem 1rem;
+            background: #132f4c;
+            border: 1px solid #1e4976;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .dept-tab.active {
+            background: #00c853;
+            color: white;
+            border-color: #00c853;
+        }
+        
+        .dept-tab:hover:not(.active) {
+            border-color: #00c853;
+        }
+        
+        .quick-actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .action-card {
+            background: #132f4c;
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid #1e4976;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .action-card:hover {
+            transform: translateY(-3px);
+            border-color: #00c853;
+            background: rgba(0, 200, 83, 0.05);
+        }
+        
+        .action-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #69f0ae;
+        }
+    </style>
+</head>
+<body>
+    <!-- Admin Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="navbar-brand">
+                <i class="fas fa-crown"></i> Helport Admin
+            </a>
+            <div class="navbar-nav">
+                <a href="index.html" class="nav-link active">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+                <a href="manage-ticket.html" class="nav-link">
+                    <i class="fas fa-ticket-alt"></i> Manage Tickets
+                </a>
+                <a href="#" class="nav-link" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+                <a href="../index.html" class="nav-link">
+                    <i class="fas fa-globe"></i> Public Site
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Admin Header -->
+    <header class="admin-header">
+        <div class="container">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h1>Admin Dashboard</h1>
+                    <p class="text-muted">Manage support tickets and departments</p>
+                </div>
+                <div class="user-info" id="userInfo">
+                    <i class="fas fa-user-circle"></i>
+                    <div>
+                        <strong>Loading...</strong>
+                        <div class="text-muted" style="font-size: 0.875rem;">System Admin</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container" style="padding: 2rem 0;">
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <div class="stat-number" id="totalTickets">42</div>
+                <div class="text-muted">Total Tickets</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🟢</div>
+                <div class="stat-number" id="openTickets">12</div>
+                <div class="text-muted">Open</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🟡</div>
+                <div class="stat-number" id="progressTickets">8</div>
+                <div class="text-muted">In Progress</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🔵</div>
+                <div class="stat-number" id="resolvedTickets">15</div>
+                <div class="text-muted">Resolved</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <div class="stat-number" id="departmentUsers">5</div>
+                <div class="text-muted">Departments</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⏱️</div>
+                <div class="stat-number" id="avgResponse">2.4</div>
+                <div class="text-muted">Avg Response (hrs)</div>
+            </div>
+        </div>
+
+        <!-- Department Tabs -->
+        <div class="department-tabs">
+            <button class="dept-tab active" data-dept="all">All Departments</button>
+            <button class="dept-tab" data-dept="technical">Technical Support</button>
+            <button class="dept-tab" data-dept="billing">Billing</button>
+            <button class="dept-tab" data-dept="general">General</button>
+            <button class="dept-tab" data-dept="sales">Sales</button>
+        </div>
+
+        <!-- Tickets Table -->
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fas fa-list"></i> Recent Tickets</h3>
+            </div>
+            <div class="card-body" style="padding: 0;">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Ticket ID</th>
+                                <th>Customer</th>
+                                <th>Subject</th>
+                                <th>Department</th>
+                                <th>Status</th>
+                                <th>Created</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ticketsTable">
+                            <!-- Tickets will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <h3 style="margin: 2rem 0 1rem 0;">
+            <i class="fas fa-bolt"></i> Quick Actions
+        </h3>
+        <div class="quick-actions-grid">
+            <div class="action-card" onclick="window.location.href='manage-ticket.html'">
+                <div class="action-icon">
+                    <i class="fas fa-plus-circle"></i>
+                </div>
+                <h4>Create Ticket</h4>
+                <p class="text-muted">Manually create a new support ticket</p>
+            </div>
+            <div class="action-card" onclick="generateReport()">
+                <div class="action-icon">
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+                <h4>Generate Report</h4>
+                <p class="text-muted">Create performance and analytics report</p>
+            </div>
+            <div class="action-card" onclick="manageDepartments()">
+                <div class="action-icon">
+                    <i class="fas fa-users-cog"></i>
+                </div>
+                <h4>Manage Departments</h4>
+                <p class="text-muted">Edit department settings and users</p>
+            </div>
+            <div class="action-card" onclick="sendBroadcast()">
+                <div class="action-icon">
+                    <i class="fas fa-bullhorn"></i>
+                </div>
+                <h4>Send Announcement</h4>
+                <p class="text-muted">Send message to all department members</p>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="card" style="margin-top: 2rem;">
+            <div class="card-header">
+                <h3><i class="fas fa-history"></i> Recent Activity</h3>
+            </div>
+            <div class="card-body">
+                <div id="activityFeed">
+                    <!-- Activity items will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div style="text-align: center;">
+                <p>&copy; 2024 Helport Admin Panel. All rights reserved.</p>
+                <p class="text-muted" style="font-size: 0.875rem;">
+                    <i class="fas fa-shield-alt"></i> Secure Admin Access Only
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Check login status
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!localStorage.getItem('adminLoggedIn')) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Load user info
+            const username = localStorage.getItem('adminUser') || 'admin';
+            const role = localStorage.getItem('adminRole') || 'admin';
+            
+            document.getElementById('userInfo').innerHTML = `
+                <i class="fas fa-user-circle"></i>
+                <div>
+                    <strong>${username}</strong>
+                    <div class="text-muted" style="font-size: 0.875rem;">
+                        ${role === 'admin' ? 'System Administrator' : 'Department User'}
+                    </div>
+                </div>
+            `;
+            
+            // Load tickets
+            loadTickets();
+            loadActivity();
+            
+            // Department tabs
+            document.querySelectorAll('.dept-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    document.querySelectorAll('.dept-tab').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    filterTickets(this.dataset.dept);
+                });
+            });
+            
+            // Logout button
+            document.getElementById('logoutBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                localStorage.removeItem('adminLoggedIn');
+                localStorage.removeItem('adminUser');
+                localStorage.removeItem('adminRole');
+                window.location.href = 'login.html';
+            });
+            
+            // Simulate real-time updates
+            setInterval(updateStats, 10000);
+            setInterval(addRandomActivity, 30000);
+        });
+        
+        // Sample ticket data
+        const sampleTickets = [
+            {
+                id: 'TICKET-2024-001',
+                customer: 'John Doe',
+                email: 'john@example.com',
+                subject: 'Website not loading properly',
+                department: 'Technical Support',
+                status: 'open',
+                created: '2024-01-15 10:30',
+                priority: 'high'
+            },
+            {
+                id: 'TICKET-2024-002',
+                customer: 'Jane Smith',
+                email: 'jane@company.com',
+                subject: 'Billing inquiry for invoice #12345',
+                department: 'Billing',
+                status: 'progress',
+                created: '2024-01-14 14:20',
+                priority: 'medium'
+            },
+            {
+                id: 'TICKET-2024-003',
+                customer: 'Bob Johnson',
+                email: 'bob@gmail.com',
+                subject: 'Feature request: Dark mode',
+                department: 'General',
+                status: 'resolved',
+                created: '2024-01-10 09:15',
+                priority: 'low'
+            },
+            {
+                id: 'TICKET-2024-004',
+                customer: 'Alice Williams',
+                email: 'alice@enterprise.com',
+                subject: 'Sales inquiry for enterprise plan',
+                department: 'Sales',
+                status: 'open',
+                created: '2024-01-16 11:45',
+                priority: 'high'
+            },
+            {
+                id: 'TICKET-2024-005',
+                customer: 'Charlie Brown',
+                email: 'charlie@startup.io',
+                subject: 'API integration issue',
+                department: 'Technical Support',
+                status: 'progress',
+                created: '2024-01-13 16:30',
+                priority: 'urgent'
+            }
+        ];
+        
+        function loadTickets() {
+            const tableBody = document.getElementById('ticketsTable');
+            tableBody.innerHTML = '';
+            
+            sampleTickets.forEach(ticket => {
+                const row = document.createElement('tr');
+                
+                // Status badge
+                let statusBadge = '';
+                let statusClass = '';
+                switch(ticket.status) {
+                    case 'open':
+                        statusBadge = '<span class="badge badge-success"><i class="fas fa-circle status-open"></i> Open</span>';
+                        break;
+                    case 'progress':
+                        statusBadge = '<span class="badge badge-warning"><i class="fas fa-circle status-progress"></i> In Progress</span>';
+                        break;
+                    case 'resolved':
+                        statusBadge = '<span class="badge badge-info"><i class="fas fa-circle status-resolved"></i> Resolved</span>';
+                        break;
+                    case 'closed':
+                        statusBadge = '<span class="badge badge-secondary"><i class="fas fa-circle status-closed"></i> Closed</span>';
+                        break;
+                }
+                
+                // Department badge
+                let deptClass = '';
+                switch(ticket.department) {
+                    case 'Technical Support':
+                        deptClass = 'dept-tech';
+                        break;
+                    case 'Billing':
+                        deptClass = 'dept-billing';
+                        break;
+                    case 'General':
+                        deptClass = 'dept-general';
+                        break;
+                    case 'Sales':
+                        deptClass = 'dept-sales';
+                        break;
+                }
+                
+                row.innerHTML = `
+                    <td><strong>${ticket.id}</strong></td>
+                    <td>
+                        <div>${ticket.customer}</div>
+                        <small class="text-muted">${ticket.email}</small>
+                    </td>
+                    <td>${ticket.subject}</td>
+                    <td>
+                        <span class="dept-badge ${deptClass}">${ticket.department}</span>
+                    </td>
+                    <td>${statusBadge}</td>
+                    <td>${formatDate(ticket.created)}</td>
+                    <td>
+                        <a href="manage-ticket.html?id=${ticket.id}" class="btn btn-sm btn-outline">
+                            <i class="fas fa-edit"></i> Manage
+                        </a>
+                    </td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+        }
+        
+        function filterTickets(department) {
+            const rows = document.querySelectorAll('#ticketsTable tr');
+            
+            rows.forEach(row => {
+                if (department === 'all') {
+                    row.style.display = '';
+                } else {
+                    const deptCell = row.querySelector('td:nth-child(4) span');
+                    if (deptCell && deptCell.textContent.toLowerCase().includes(department.toLowerCase())) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                }
+            });
+        }
+        
+        function loadActivity() {
+            const activityFeed = document.getElementById('activityFeed');
+            
+            const activities = [
+                { icon: '🔄', text: 'Ticket TICKET-2024-001 status changed to In Progress', time: '10 minutes ago' },
+                { icon: '💬', text: 'New reply added to TICKET-2024-003 by Admin', time: '45 minutes ago' },
+                { icon: '✅', text: 'Ticket TICKET-2024-002 marked as Resolved', time: '2 hours ago' },
+                { icon: '👤', text: 'New user registration: Sarah Connor', time: '3 hours ago' },
+                { icon: '📊', text: 'Monthly report generated successfully', time: '5 hours ago' }
+            ];
+            
+            activities.forEach(activity => {
+                const item = document.createElement('div');
+                item.style.cssText = `
+                    display: flex;
+                    align-items: flex-start;
+                    gap: 1rem;
+                    padding: 1rem;
+                    border-bottom: 1px solid #1e4976;
+                `;
+                item.innerHTML = `
+                    <div style="font-size: 1.5rem;">${activity.icon}</div>
+                    <div style="flex: 1;">
+                        <div>${activity.text}</div>
+                        <small class="text-muted">${activity.time}</small>
+                    </div>
+                `;
+                activityFeed.appendChild(item);
+            });
+        }
+        
+        function updateStats() {
+            // Simulate random stat changes
+            const total = document.getElementById('totalTickets');
+            const open = document.getElementById('openTickets');
+            const progress = document.getElementById('progressTickets');
+            const resolved = document.getElementById('resolvedTickets');
+            
+            // Random small changes
+            const change = Math.random() > 0.5 ? 1 : -1;
+            const newOpen = Math.max(0, parseInt(open.textContent) + change);
+            const newTotal = parseInt(total.textContent) + 1;
+            
+            open.textContent = newOpen;
+            progress.textContent = Math.floor(Math.random() * 10) + 5;
+            resolved.textContent = newTotal - newOpen - parseInt(progress.textContent);
+            total.textContent = newTotal;
+        }
+        
+        function addRandomActivity() {
+            const activities = [
+                { icon: '📝', text: 'New ticket submitted by customer', time: 'just now' },
+                { icon: '🔄', text: 'Ticket assigned to different department', time: 'just now' },
+                { icon: '💬', text: 'Customer replied to ticket', time: 'just now' },
+                { icon: '⏰', text: 'Reminder sent for pending tickets', time: 'just now' }
+            ];
+            
+            const activity = activities[Math.floor(Math.random() * activities.length)];
+            const activityFeed = document.getElementById('activityFeed');
+            
+            const item = document.createElement('div');
+            item.style.cssText = `
+                display: flex;
+                align-items: flex-start;
+                gap: 1rem;
+                padding: 1rem;
+                border-bottom: 1px solid #1e4976;
+                animation: fadeIn 0.5s ease;
+            `;
+            item.innerHTML = `
+                <div style="font-size: 1.5rem;">${activity.icon}</div>
+                <div style="flex: 1;">
+                    <div>${activity.text}</div>
+                    <small class="text-muted">${activity.time}</small>
+                </div>
+            `;
+            
+            activityFeed.insertBefore(item, activityFeed.firstChild);
+            
+            // Limit to 10 activities
+            while (activityFeed.children.length > 10) {
+                activityFeed.removeChild(activityFeed.lastChild);
+            }
+        }
+        
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { 
+                month: 'short', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+        
+        function generateReport() {
+            alert('📊 Generating report... This feature would connect to a database in a real application.');
+        }
+        
+        function manageDepartments() {
+            alert('👥 Department management panel would open here in a real application.');
+        }
+        
+        function sendBroadcast() {
+            const message = prompt('Enter announcement message:');
+            if (message) {
+                alert(`📢 Announcement sent: "${message}"`);
+            }
+        }
+    </script>
+</body>
+</html>

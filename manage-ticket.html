@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Ticket - Helport Admin</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .ticket-header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .ticket-meta-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .meta-card {
+            background: #132f4c;
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid #1e4976;
+        }
+        
+        .meta-card h4 {
+            color: #69f0ae;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .conversation-thread {
+            max-width: 800px;
+            margin: 0 auto 2rem auto;
+        }
+        
+        .message {
+            margin-bottom: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid #1e4976;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .message-user {
+            background: rgba(19, 47, 76, 0.5);
+            border-left: 4px solid #00c853;
+        }
+        
+        .message-admin {
+            background: rgba(0, 200, 83, 0.1);
+            border-left: 4px solid #81c784;
+        }
+        
+        .message-system {
+            background: rgba(79, 195, 247, 0.1);
+            border-left: 4px solid #4fc3f7;
+        }
+        
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .message-sender {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .message-time {
+            color: #90a4ae;
+            font-size: 0.875rem;
+        }
+        
+        .action-sidebar {
+            position: sticky;
+            top: 100px;
+        }
+        
+        .action-group {
+            margin-bottom: 2rem;
+        }
+        
+        .quick-response {
+            cursor: pointer;
+            padding: 0.75rem;
+            border: 1px solid #1e4976;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .quick-response:hover {
+            background: rgba(0, 200, 83, 0.1);
+            border-color: #00c853;
+        }
+        
+        .history-item {
+            padding: 0.75rem;
+            border-bottom: 1px solid #1e4976;
+            font-size: 0.875rem;
+        }
+        
+        .history-item:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Admin Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="navbar-brand">
+                <i class="fas fa-crown"></i> Helport Admin
+            </a>
+            <div class="navbar-nav">
+                <a href="index.html" class="nav-link">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+                <a href="manage-ticket.html" class="nav-link active">
+                    <i class="fas fa-ticket-alt"></i> Manage Ticket
+                </a>
+                <a href="#" class="nav-link" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+                <a href="../index.html" class="nav-link">
+                    <i class="fas fa-globe"></i> Public Site
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container" style="padding: 2rem 0;">
+        <!-- Ticket Header -->
+        <div class="ticket-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <div>
+                <h1>Ticket TICKET-2024-001</h1>
+                <p class="text-muted">
+                    <span class="badge badge-success">
+                        <i class="fas fa-circle status-open"></i> Open
+                    </span>
+                    • Created: January 15, 2024 • Last updated: 2 hours ago
+                </p>
+            </div>
+            <div class="ticket-header-actions">
+                <button class="btn btn-outline" onclick="printTicket()">
+                    <i class="fas fa-print"></i> Print
+                </button>
+                <button class="btn btn-primary" onclick="closeTicket()">
+                    <i class="fas fa-check-circle"></i> Close Ticket
+                </button>
+            </div>
+        </div>
+
+        <div class="row" style="display: grid; grid-template-columns: 1fr 350px; gap: 2rem;">
+            <!-- Left Column: Ticket Details -->
+            <div>
+                <!-- Ticket Metadata -->
+                <div class="ticket-meta-grid">
+                    <div class="meta-card">
+                        <h4><i class="fas fa-user"></i> Customer Info</h4>
+                        <p><strong>Name:</strong> John Doe</p>
+                        <p><strong>Email:</strong> john@example.com</p>
+                        <p><strong>Phone:</strong> (123) 456-7890</p>
+                    </div>
+                    
+                    <div class="meta-card">
+                        <h4><i class="fas fa-building"></i> Department</h4>
+                        <p><strong>Assigned:</strong> Technical Support</p>
+                        <p><strong>Priority:</strong> 
+                            <span class="badge badge-danger">High</span>
+                        </p>
+                        <p><strong>Category:</strong> Website Issue</p>
+                    </div>
+                    
+                    <div class="meta-card">
+                        <h4><i class="fas fa-info-circle"></i> Ticket Details</h4>
+                        <p><strong>Created:</strong> Jan 15, 2024, 10:30 AM</p>
+                        <p><strong>Last Reply:</strong> Jan 15, 2024, 11:45 AM</p>
+                        <p><strong>Replies:</strong> 3 messages</p>
+                    </div>
+                </div>
+
+                <!-- Subject -->
+                <div class="card" style="margin-bottom: 1.5rem;">
+                    <div class="card-header">
+                        <h4><i class="fas fa-heading"></i> Subject</h4>
+                    </div>
+                    <div class="card-body">
+                        <h3>Website not loading properly on mobile devices</h3>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="card" style="margin-bottom: 2rem;">
+                    <div class="card-header">
+                        <h4><i class="fas fa-align-left"></i> Issue Description</h4>
+                    </div>
+                    <div class="card-body">
+                        <p>Hello,</p>
+                        <p>I'm experiencing issues with the website not loading properly on mobile devices. When I access the site from my iPhone (Safari browser), the layout appears broken and some elements are overlapping.</p>
+                        <p>The issues include:</p>
+                        <ul>
+                            <li>Navigation menu not responding to touch</li>
+                            <li>Images overlapping text content</li>
+                            <li>Forms not displaying correctly</li>
+                            <li>Slow loading times on mobile network</li>
+                        </ul>
+                        <p>This started happening yesterday afternoon. I've tried clearing cache and using different browsers but the issue persists.</p>
+                        <p>Please advise on how to resolve this issue.</p>
+                        <br>
+                        <p>Best regards,<br>John Doe</p>
+                        
+                        <!-- Attachments -->
+                        <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #1e4976;">
+                            <h5><i class="fas fa-paperclip"></i> Attachments</h5>
+                            <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                                <div class="btn btn-outline">
+                                    <i class="fas fa-image"></i> screenshot-1.png
+                                </div>
+                                <div class="btn btn-outline">
+                                    <i class="fas fa-file-alt"></i> error-logs.txt
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Conversation Thread -->
+                <div class="card">
+                    <div class="card-header">
+                        <h4><i class="fas fa-comments"></i> Conversation</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="conversation-thread">
+                            <!-- Message 1: Customer -->
+                            <div class="message message-user">
+                                <div class="message-header">
+                                    <div class="message-sender">
+                                        <i class="fas fa-user-circle"></i>
+                                        John Doe (Customer)
+                                    </div>
+                                    <div class="message-time">Jan 15, 10:30 AM</div>
+                                </div>
+                                <div class="message-content">
+                                    <p>Hello, I'm having issues with the website on mobile. The layout appears broken and some buttons don't work.</p>
+                                </div>
+                            </div>
+
+                            <!-- Message 2: Admin -->
+                            <div class="message message-admin">
+                                <div class="message-header">
+                                    <div class="message-sender">
+                                        <i class="fas fa-user-shield"></i>
+                                        Admin (Technical Support)
+                                    </div>
+                                    <div class="message-time">Jan 15, 11:15 AM</div>
+                                </div>
+                                <div class="message-content">
+                                    <p>Hello John,</p>
+                                    <p>Thank you for reporting this issue. We're looking into it. Could you please provide:</p>
+                                    <ol>
+                                        <li>Which specific pages are affected?</li>
+                                        <li>What iPhone model and iOS version are you using?</li>
+                                        <li>Have you tried accessing from other devices?</li>
+                                    </ol>
+                                    <p>This will help us diagnose the issue faster.</p>
+                                    <br>
+                                    <p>Best regards,<br>Support Team</p>
+                                </div>
+                            </div>
+
+                            <!-- Message 3: Customer -->
+                            <div class="message message-user">
+                                <div class="message-header">
+                                    <div class="message-sender">
+                                        <i class="fas fa-user-circle"></i>
+                                        John Doe (Customer)
+                                    </div>
+                                    <div class="message-time">Jan 15, 11:45 AM</div>
+                                </div>
+                                <div class="message-content">
+                                    <p>Thanks for the quick response. Here are the details:</p>
+                                    <ul>
+                                        <li>Homepage and product pages are affected</li>
+                                        <li>iPhone 13, iOS 17.2</li>
+                                        <li>Works fine on my laptop (Chrome browser)</li>
+                                    </ul>
+                                    <p>I've attached a screenshot showing the issue.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Reply Form -->
+                        <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #1e4976;">
+                            <h5><i class="fas fa-reply"></i> Add Reply</h5>
+                            <div class="form-group" style="margin-top: 1rem;">
+                                <textarea id="replyMessage" class="form-control" rows="5" placeholder="Type your response here..."></textarea>
+                                <div style="display: flex; justify-content: space-between; margin-top: 0.5rem;">
+                                    <small class="text-muted">Your reply will be sent to the customer</small>
+                                    <small class="text-muted">Characters: <span id="replyCharCount">0</span></small>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                                <button class="btn btn-primary" onclick="sendReply()">
+                                    <i class="fas fa-paper-plane"></i> Send Reply
+                                </button>
+                                <button class="btn btn-outline" onclick="saveDraft()">
+                                    <i class="fas fa-save"></i> Save Draft
+                                </button>
+                                <button class="btn btn-outline" onclick="addInternalNote()">
+                                    <i class="fas fa-sticky-note"></i> Internal Note
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Actions -->
+            <div class="action-sidebar">
+                <!-- Status Actions -->
+                <div class="card action-group">
+                    <div class="card-header">
+                        <h5><i class="fas fa-sync-alt"></i> Update Status</h5>
+                    </div>
+                    <div class="card-body">
+                        <select class="form-select" id="statusSelect">
+                            <option value="open">🟢 Open</option>
+                            <option value="progress" selected>🟡 In Progress</option>
+                            <option value="resolved">🔵 Resolved</option>
+                            <option value="closed">⚫ Closed</option>
+                        </select>
+                        <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;" onclick="updateStatus()">
+                            <i class="fas fa-check"></i> Update Status
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Quick Responses -->
+                <div class="card action-group">
+                    <div class="card-header">
+                        <h5><i class="fas fa-bolt"></i> Quick Responses</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="quick-response" onclick="useTemplate('acknowledge')">
+                            <strong>Acknowledgment</strong>
+                            <div class="text-muted" style="font-size: 0.875rem; margin-top: 0.25rem;">
+                                "Thanks for reporting, we're looking into it"
+                            </div>
+                        </div>
+                        <div class="quick-response" onclick="useTemplate('info')">
+                            <strong>Request Info</strong>
+                            <div class="text-muted" style="font-size: 0.875rem; margin-top: 0.25rem;">
+                                "Could you provide more details?"
+                            </div>
+                        </div>
+                        <div class="quick-response" onclick="useTemplate('resolved')">
+                            <strong>Mark Resolved</strong>
+                            <div class="text-muted" style="font-size: 0.875rem; margin-top: 0.25rem;">
+                                "Issue has been resolved, thank you"
+                            </div>
+                        </div>
+                        <div class="quick-response" onclick="useTemplate('followup')">
+                            <strong>Follow-up</strong>
+                            <div class="text-muted" style="font-size: 0.875rem; margin-top: 0.25rem;">
+                                "Just checking if everything is working now"
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ticket History -->
+                <div class="card action-group">
+                    <div class="card-header">
+                        <h5><i class="fas fa-history"></i> Ticket History</h5>
+                    </div>
+                    <div class="card-body" style="padding: 0;">
+                        <div class="history-item">
+                            <div><strong>Status Updated</strong></div>
+                            <div class="text-muted">Open → In Progress</div>
+                            <small class="text-muted">by Admin, 2 hours ago</small>
+                        </div>
+                        <div class="history-item">
+                            <div><strong>Department Assigned</strong></div>
+                            <div class="text-muted">General → Technical Support</div>
+                            <small class="text-muted">by System, 3 hours ago</small>
+                        </div>
+                        <div class="history-item">
+                            <div><strong>Priority Changed</strong></div>
+                            <div class="text-muted">Medium → High</div>
+                            <small class="text-muted">by Admin, 3 hours ago</small>
+                        </div>
+                        <div class="history-item">
+                            <div><strong>Ticket Created</strong></div>
+                            <div class="text-muted">Customer submitted ticket</div>
+                            <small class="text-muted">4 hours ago</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Customer Actions -->
+                <div class="card action-group">
+                    <div class="card-header">
+                        <h5><i class="fas fa-user-cog"></i> Customer Actions</h5>
+                    </div>
+                    <div class="card-body">
+                        <button class="btn btn-outline" style="width: 100%; margin-bottom: 0.5rem;" onclick="emailCustomer()">
+                            <i class="fas fa-envelope"></i> Email Customer
+                        </button>
+                        <button class="btn btn-outline" style="width: 100%; margin-bottom: 0.5rem;" onclick="callCustomer()">
+                            <i class="fas fa-phone"></i> Call Customer
+                        </button>
+                        <button class="btn btn-outline" style="width: 100%;" onclick="viewCustomerHistory()">
+                            <i class="fas fa-history"></i> View History
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div style="text-align: center;">
+                <p>&copy; 2024 Helport Admin Panel. All rights reserved.</p>
+                <p class="text-muted" style="font-size: 0.875rem;">
+                    <i class="fas fa-shield-alt"></i> Ticket Management System
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Check login
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!localStorage.getItem('adminLoggedIn')) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Character counter
+            const replyTextarea = document.getElementById('replyMessage');
+            const charCount = document.getElementById('replyCharCount');
+            
+            if (replyTextarea && charCount) {
+                replyTextarea.addEventListener('input', function() {
+                    const count = this.value.length;
+                    charCount.textContent = count;
+                    
+                    if (count < 10) {
+                        charCount.style.color = '#ff8a80';
+                    } else if (count < 50) {
+                        charCount.style.color = '#ffb74d';
+                    } else {
+                        charCount.style.color = '#81c784';
+                    }
+                });
+                
+                // Load draft if exists
+                const draft = localStorage.getItem('ticketReplyDraft');
+                if (draft) {
+                    if (confirm('Load saved draft?')) {
+                        replyTextarea.value = draft;
+                        replyTextarea.dispatchEvent(new Event('input'));
+                    }
+                }
+            }
+            
+            // Logout button
+            document.getElementById('logoutBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                localStorage.removeItem('adminLoggedIn');
+                localStorage.removeItem('adminUser');
+                localStorage.removeItem('adminRole');
+                window.location.href = 'login.html';
+            });
+        });
+        
+        function sendReply() {
+            const message = document.getElementById('replyMessage').value.trim();
+            if (!message) {
+                alert('Please enter a reply message');
+                return;
+            }
+            
+            // Add to conversation
+            const thread = document.querySelector('.conversation-thread');
+            const newMessage = document.createElement('div');
+            newMessage.className = 'message message-admin';
+            newMessage.innerHTML = `
+                <div class="message-header">
+                    <div class="message-sender">
+                        <i class="fas fa-user-shield"></i>
+                        ${localStorage.getItem('adminUser') || 'Admin'}
+                    </div>
+                    <div class="message-time">Just now</div>
+                </div>
+                <div class="message-content">
+                    <p>${message.replace(/\n/g, '<br>')}</p>
+                </div>
+            `;
+            thread.appendChild(newMessage);
+            
+            // Clear textarea
+            document.getElementById('replyMessage').value = '';
+            document.getElementById('replyCharCount').textContent = '0';
+            document.getElementById('replyCharCount').style.color = '';
+            
+            // Remove draft
+            localStorage.removeItem('ticketReplyDraft');
+            
+            // Show success
+            alert('✅ Reply sent successfully!');
+            
+            // Scroll to new message
+            newMessage.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        function saveDraft() {
+            const message = document.getElementById('replyMessage').value.trim();
+            if (message) {
+                localStorage.setItem('ticketReplyDraft', message);
+                alert('💾 Draft saved locally');
+            } else {
+                alert('Please enter a message to save as draft');
+            }
+        }
+        
+        function updateStatus() {
+            const select = document.getElementById('statusSelect');
+            const status = select.value;
+            const statusText = select.options[select.selectedIndex].text;
+            
+            // Update badge in header
+            const badge = document.querySelector('.ticket-header .badge');
+            badge.className = `badge ${getStatusClass(status)}`;
+            badge.innerHTML = `<i class="fas fa-circle ${getStatusIcon(status)}"></i> ${statusText}`;
+            
+            // Add to history
+            alert(`✅ Status updated to: ${statusText}`);
+            
+            // Add system message
+            const thread = document.querySelector('.conversation-thread');
+            const systemMessage = document.createElement('div');
+            systemMessage.className = 'message message-system';
+            systemMessage.innerHTML = `
+                <div class="message-header">
+                    <div class="message-sender">
+                        <i class="fas fa-robot"></i>
+                        System
+                    </div>
+                    <div class="message-time">Just now</div>
+                </div>
+                <div class="message-content">
+                    <p>Ticket status changed to <strong>${statusText}</strong></p>
+                </div>
+            `;
+            thread.appendChild(systemMessage);
+        }
+        
+        function getStatusClass(status) {
+            switch(status) {
+                case 'open': return 'badge-success';
+                case 'progress': return 'badge-warning';
+                case 'resolved': return 'badge-info';
+                case 'closed': return 'badge-secondary';
+                default: return 'badge-success';
+            }
+        }
+        
+        function getStatusIcon(status) {
+            switch(status) {
+                case 'open': return 'status-open';
+                case 'progress': return 'status-progress';
+                case 'resolved': return 'status-resolved';
+                case 'closed': return 'status-closed';
+                default: return 'status-open';
+            }
+        }
+        
+        function useTemplate(type) {
+            const templates = {
+                acknowledge: "Hello John,\n\nThank you for reporting this issue. We have received your ticket and are currently investigating the problem. We'll get back to you with an update shortly.\n\nBest regards,\nSupport Team",
+                info: "Hello John,\n\nTo help us resolve this issue faster, could you please provide some additional information:\n\n1. \n2. \n3. \n\nThank you for your cooperation.\n\nBest regards,\nSupport Team",
+                resolved: "Hello John,\n\nWe're pleased to inform you that the issue has been resolved. Please test the functionality and let us know if everything is working as expected.\n\nIf you have any further questions, please don't hesitate to contact us.\n\nBest regards,\nSupport Team",
+                followup: "Hello John,\n\nJust checking in to see if everything is working properly now. Please let us know if you're still experiencing any issues.\n\nBest regards,\nSupport Team"
+            };
+            
+            document.getElementById('replyMessage').value = templates[type];
+            document.getElementById('replyMessage').dispatchEvent(new Event('input'));
+        }
+        
+        function addInternalNote() {
+            const note = prompt('Enter internal note:');
+            if (note) {
+                alert('📝 Internal note added');
+                // In a real app, this would be saved to the database
+            }
+        }
+        
+        function closeTicket() {
+            if (confirm('Are you sure you want to close this ticket?')) {
+                alert('✅ Ticket closed successfully');
+                // Update status to closed
+                document.getElementById('statusSelect').value = 'closed';
+                updateStatus();
+            }
+        }
+        
+        function printTicket() {
+            window.print();
+        }
+        
+        function emailCustomer() {
+            alert('📧 Email client would open with pre-filled recipient: john@example.com');
+        }
+        
+        function callCustomer() {
+            alert('📞 Phone app would open to call: (123) 456-7890');
+        }
+        
+        function viewCustomerHistory() {
+            alert('📋 Customer history would open in a new window');
+        }
+    </script>
+</body>
+</html>

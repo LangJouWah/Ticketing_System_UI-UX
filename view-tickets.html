@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Tickets - Helport</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="navbar-brand">Helport</a>
+            <div class="navbar-nav">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="create-ticket.html" class="nav-link">Create Ticket</a>
+                <a href="view-tickets.html" class="nav-link active">View Tickets</a>
+                <a href="admin/login.html" class="nav-link">Admin Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container" style="padding: 3rem 0;">
+        <div class="fade-in">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3rem;">
+                <div>
+                    <h1>Your Support Tickets</h1>
+                    <p class="text-muted">Track and manage all your support requests</p>
+                </div>
+                <a href="create-ticket.html" class="btn btn-primary">
+                    <i class="fas fa-plus-circle"></i> New Ticket
+                </a>
+            </div>
+
+            <!-- Search and Filter -->
+            <div class="card" style="margin-bottom: 2rem;">
+                <div class="card-body">
+                    <div style="display: grid; grid-template-columns: 1fr auto auto; gap: 1rem; align-items: center;">
+                        <div>
+                            <div class="form-group" style="margin: 0;">
+                                <input type="email" class="form-control" placeholder="Enter your email to search tickets">
+                            </div>
+                        </div>
+                        <select class="form-select" style="width: 200px;">
+                            <option value="all">All Status</option>
+                            <option value="open">Open</option>
+                            <option value="progress">In Progress</option>
+                            <option value="resolved">Resolved</option>
+                            <option value="closed">Closed</option>
+                        </select>
+                        <button class="btn btn-primary">
+                            <i class="fas fa-search"></i> Search
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tickets Table -->
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-list"></i> Ticket List</h3>
+                </div>
+                <div class="card-body" style="padding: 0;">
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Ticket ID</th>
+                                    <th>Subject</th>
+                                    <th>Department</th>
+                                    <th>Status</th>
+                                    <th>Created</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Ticket 1 -->
+                                <tr>
+                                    <td><strong>TICKET-2024-001</strong></td>
+                                    <td>
+                                        <div>Website not loading properly</div>
+                                        <small class="text-muted">Last updated: 2 hours ago</small>
+                                    </td>
+                                    <td>Technical Support</td>
+                                    <td>
+                                        <span class="badge badge-success">
+                                            <i class="fas fa-circle status-open"></i> Open
+                                        </span>
+                                    </td>
+                                    <td>Jan 15, 2024</td>
+                                    <td>
+                                        <a href="ticket-details.html" class="btn btn-sm btn-outline">
+                                            <i class="fas fa-eye"></i> View
+                                        </a>
+                                    </td>
+                                </tr>
+                                <!-- Ticket 2 -->
+                                <tr>
+                                    <td><strong>TICKET-2024-002</strong></td>
+                                    <td>
+                                        <div>Billing inquiry for invoice #12345</div>
+                                        <small class="text-muted">Last updated: 1 day ago</small>
+                                    </td>
+                                    <td>Billing Department</td>
+                                    <td>
+                                        <span class="badge badge-warning">
+                                            <i class="fas fa-circle status-progress"></i> In Progress
+                                        </span>
+                                    </td>
+                                    <td>Jan 14, 2024</td>
+                                    <td>
+                                        <a href="ticket-details.html" class="btn btn-sm btn-outline">
+                                            <i class="fas fa-eye"></i> View
+                                        </a>
+                                    </td>
+                                </tr>
+                                <!-- Ticket 3 -->
+                                <tr>
+                                    <td><strong>TICKET-2024-003</strong></td>
+                                    <td>
+                                        <div>Feature request: Dark mode</div>
+                                        <small class="text-muted">Last updated: 3 days ago</small>
+                                    </td>
+                                    <td>General Inquiry</td>
+                                    <td>
+                                        <span class="badge badge-info">
+                                            <i class="fas fa-circle status-resolved"></i> Resolved
+                                        </span>
+                                    </td>
+                                    <td>Jan 10, 2024</td>
+                                    <td>
+                                        <a href="ticket-details.html" class="btn btn-sm btn-outline">
+                                            <i class="fas fa-eye"></i> View
+                                        </a>
+                                    </td>
+                                </tr>
+                                <!-- Ticket 4 -->
+                                <tr>
+                                    <td><strong>TICKET-2023-999</strong></td>
+                                    <td>
+                                        <div>Account deletion request</div>
+                                        <small class="text-muted">Last updated: Jan 5, 2024</small>
+                                    </td>
+                                    <td>Technical Support</td>
+                                    <td>
+                                        <span class="badge badge-secondary">
+                                            <i class="fas fa-circle status-closed"></i> Closed
+                                        </span>
+                                    </td>
+                                    <td>Dec 20, 2023</td>
+                                    <td>
+                                        <a href="ticket-details.html" class="btn btn-sm btn-outline">
+                                            <i class="fas fa-eye"></i> View
+                                        </a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination">
+                <li class="page-item">
+                    <a href="#" class="page-link">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a href="#" class="page-link active">1</a>
+                </li>
+                <li class="page-item">
+                    <a href="#" class="page-link">2</a>
+                </li>
+                <li class="page-item">
+                    <a href="#" class="page-link">3</a>
+                </li>
+                <li class="page-item">
+                    <a href="#" class="page-link">4</a>
+                </li>
+                <li class="page-item">
+                    <a href="#" class="page-link">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </li>
+            </div>
+
+            <!-- Stats -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-top: 3rem;">
+                <div class="card">
+                    <div class="card-body" style="text-align: center;">
+                        <h3>4</h3>
+                        <p class="text-muted">Total Tickets</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body" style="text-align: center;">
+                        <h3>1</h3>
+                        <p class="text-muted">Open</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body" style="text-align: center;">
+                        <h3>1</h3>
+                        <p class="text-muted">In Progress</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body" style="text-align: center;">
+                        <h3>2</h3>
+                        <p class="text-muted">Resolved</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div style="text-align: center;">
+                <p>&copy; 2024 Helport. All rights reserved.</p>
+                <p class="text-muted" style="font-size: 0.875rem;">
+                    Need help? Contact us at support@helport.com
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/script.js"></script>
+</body>
+</html>

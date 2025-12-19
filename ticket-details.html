@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket Details - Helport</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .ticket-progress {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: #132f4c;
+            border-radius: 12px;
+            border: 1px solid #1e4976;
+        }
+        
+        .progress-step {
+            text-align: center;
+            flex: 1;
+            position: relative;
+        }
+        
+        .progress-step:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            top: 20px;
+            right: -50%;
+            width: 100%;
+            height: 2px;
+            background: #1e4976;
+            z-index: 1;
+        }
+        
+        .step-icon {
+            width: 40px;
+            height: 40px;
+            background: #1e4976;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.5rem auto;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .step-icon.active {
+            background: #00c853;
+            color: white;
+        }
+        
+        .step-icon.completed {
+            background: #00b248;
+            color: white;
+        }
+        
+        .step-label {
+            font-size: 0.875rem;
+            color: #90a4ae;
+        }
+        
+        .step-label.active {
+            color: #69f0ae;
+            font-weight: 600;
+        }
+        
+        .ticket-actions-bar {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            background: #132f4c;
+            border-radius: 8px;
+            border: 1px solid #1e4976;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .conversation-thread {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .message {
+            margin-bottom: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 12px;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .message-customer {
+            background: rgba(19, 47, 76, 0.5);
+            border-left: 4px solid #00c853;
+            margin-right: 3rem;
+        }
+        
+        .message-support {
+            background: rgba(0, 200, 83, 0.1);
+            border-left: 4px solid #81c784;
+            margin-left: 3rem;
+        }
+        
+        .message-system {
+            background: rgba(79, 195, 247, 0.1);
+            border-left: 4px solid #4fc3f7;
+            text-align: center;
+        }
+        
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .message-sender {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .message-time {
+            color: #90a4ae;
+            font-size: 0.875rem;
+        }
+        
+        .attachment-preview {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            margin-top: 1rem;
+            text-decoration: none;
+            border: 1px solid #1e4976;
+            transition: all 0.3s ease;
+        }
+        
+        .attachment-preview:hover {
+            background: rgba(0, 200, 83, 0.1);
+            border-color: #00c853;
+        }
+        
+        .ticket-sidebar {
+            background: #132f4c;
+            border-radius: 12px;
+            border: 1px solid #1e4976;
+            padding: 1.5rem;
+            position: sticky;
+            top: 100px;
+        }
+        
+        .info-item {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #1e4976;
+        }
+        
+        .info-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        
+        .info-label {
+            display: block;
+            color: #69f0ae;
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        
+        .satisfaction-rating {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .star {
+            font-size: 1.5rem;
+            color: #1e4976;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .star.active {
+            color: #ffb74d;
+        }
+        
+        .star:hover {
+            transform: scale(1.2);
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .ticket-progress {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+            
+            .progress-step:not(:last-child)::after {
+                display: none;
+            }
+            
+            .message-customer {
+                margin-right: 0;
+            }
+            
+            .message-support {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="navbar-brand">Helport</a>
+            <div class="navbar-nav">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="create-ticket.html" class="nav-link">Create Ticket</a>
+                <a href="view-tickets.html" class="nav-link">View Tickets</a>
+                <a href="admin/login.html" class="nav-link">Admin Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container" style="padding: 2rem 0;">
+        <!-- Breadcrumb -->
+        <div style="margin-bottom: 2rem;">
+            <a href="view-tickets.html" style="color: #69f0ae; text-decoration: none;">
+                <i class="fas fa-arrow-left"></i> Back to Tickets
+            </a>
+        </div>
+
+        <!-- Ticket Header -->
+        <div class="card" style="margin-bottom: 2rem;">
+            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h1 style="margin: 0;">Ticket #TICKET-2024-001</h1>
+                    <p style="margin: 0.5rem 0 0 0; color: #90a4ae;">
+                        Website not loading properly on mobile devices
+                    </p>
+                </div>
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <span class="badge badge-warning">
+                        <i class="fas fa-circle status-progress"></i> In Progress
+                    </span>
+                    <button class="btn btn-outline btn-sm" onclick="printTicket()">
+                        <i class="fas fa-print"></i> Print
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                    <div>
+                        <strong style="color: #69f0ae;">Customer:</strong><br>
+                        John Doe
+                    </div>
+                    <div>
+                        <strong style="color: #69f0ae;">Department:</strong><br>
+                        Technical Support
+                    </div>
+                    <div>
+                        <strong style="color: #69f0ae;">Created:</strong><br>
+                        January 15, 2024, 10:30 AM
+                    </div>
+                    <div>
+                        <strong style="color: #69f0ae;">Last Updated:</strong><br>
+                        2 hours ago
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress Tracker -->
+        <div class="ticket-progress">
+            <div class="progress-step">
+                <div class="step-icon completed">
+                    <i class="fas fa-ticket-alt"></i>
+                </div>
+                <div class="step-label completed">Submitted</div>
+                <div class="step-time">Jan 15, 10:30 AM</div>
+            </div>
+            <div class="progress-step">
+                <div class="step-icon completed">
+                    <i class="fas fa-user-check"></i>
+                </div>
+                <div class="step-label completed">Acknowledged</div>
+                <div class="step-time">Jan 15, 11:15 AM</div>
+            </div>
+            <div class="progress-step">
+                <div class="step-icon active">
+                    <i class="fas fa-tools"></i>
+                </div>
+                <div class="step-label active">In Progress</div>
+                <div class="step-time">Current</div>
+            </div>
+            <div class="progress-step">
+                <div class="step-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="step-label">Resolved</div>
+                <div class="step-time">Pending</div>
+            </div>
+            <div class="progress-step">
+                <div class="step-icon">
+                    <i class="fas fa-star"></i>
+                </div>
+                <div class="step-label">Feedback</div>
+                <div class="step-time">Pending</div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="ticket-actions-bar">
+            <button class="btn btn-outline" onclick="requestUpdate()">
+                <i class="fas fa-sync-alt"></i> Request Update
+            </button>
+            <button class="btn btn-outline" onclick="addAttachment()">
+                <i class="fas fa-paperclip"></i> Add Attachment
+            </button>
+            <button class="btn btn-outline" onclick="escalateTicket()">
+                <i class="fas fa-exclamation-triangle"></i> Escalate
+            </button>
+            <button class="btn btn-outline" onclick="shareTicket()">
+                <i class="fas fa-share-alt"></i> Share
+            </button>
+            <button class="btn btn-primary" onclick="provideFeedback()" style="margin-left: auto;">
+                <i class="fas fa-comment-alt"></i> Add Feedback
+            </button>
+        </div>
+
+        <div class="row" style="display: grid; grid-template-columns: 1fr 350px; gap: 2rem;">
+            <!-- Left Column: Conversation -->
+            <div>
+                <!-- Conversation Thread -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-comments"></i> Conversation</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="conversation-thread">
+                            <!-- System Message: Ticket Created -->
+                            <div class="message message-system">
+                                <div class="message-time">January 15, 2024, 10:30 AM</div>
+                                <div class="message-content">
+                                    <p><strong>Ticket created successfully</strong></p>
+                                    <p>Your ticket has been submitted to Technical Support department</p>
+                                </div>
+                            </div>
+
+                            <!-- Customer Message -->
+                            <div class="message message-customer">
+                                <div class="message-header">
+                                    <div class="message-sender">
+                                        <i class="fas fa-user-circle"></i>
+                                        John Doe
+                                    </div>
+                                    <div class="message-time">January 15, 10:30 AM</div>
+                                </div>
+                                <div class="message-content">
+                                    <p>Hello,</p>
+                                    <p>I'm experiencing issues with the website not loading properly on mobile devices. When I access the site from my iPhone (Safari browser), the layout appears broken and some elements are overlapping.</p>
+                                    
+                                    <p>The issues include:</p>
+                                    <ul>
+                                        <li>Navigation menu not responding to touch</li>
+                                        <li>Images overlapping text content</li>
+                                        <li>Forms not displaying correctly</li>
+                                        <li>Slow loading times on mobile network</li>
+                                    </ul>
+                                    
+                                    <p>This started happening yesterday afternoon. I've tried clearing cache and using different browsers but the issue persists.</p>
+                                    <p>Please advise on how to resolve this issue.</p>
+                                    <br>
+                                    <p>Best regards,<br>John Doe</p>
+                                    
+                                    <!-- Attachments -->
+                                    <div style="margin-top: 1rem;">
+                                        <a href="#" class="attachment-preview">
+                                            <i class="fas fa-image"></i>
+                                            screenshot-1.png
+                                        </a>
+                                        <a href="#" class="attachment-preview" style="margin-left: 0.5rem;">
+                                            <i class="fas fa-file-alt"></i>
+                                            error-logs.txt
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Support Response -->
+                            <div class="message message-support">
+                                <div class="message-header">
+                                    <div class="message-sender">
+                                        <i class="fas fa-user-shield"></i>
+                                        Sarah Johnson (Support Agent)
+                                    </div>
+                                    <div class="message-time">January 15, 11:15 AM</div>
+                                </div>
+                                <div class="message-content">
+                                    <p>Hello John,</p>
+                                    <p>Thank you for reporting this issue. We've received your ticket and our Technical Support team is now investigating the problem.</p>
+                                    
+                                    <p>To help us resolve this faster, could you please provide:</p>
+                                    <ol>
+                                        <li>Which specific pages are affected?</li>
+                                        <li>What iPhone model and iOS version are you using?</li>
+                                        <li>Have you tried accessing from other mobile devices?</li>
+                                        <li>Are you using WiFi or mobile data?</li>
+                                    </ol>
+                                    
+                                    <p>Based on the screenshot you provided, it looks like a CSS rendering issue specific to mobile Safari. We'll also check our server logs for any related errors.</p>
+                                    
+                                    <p>We aim to provide an initial response within 2-4 hours. You can check the progress of your ticket on this page.</p>
+                                    <br>
+                                    <p>Best regards,<br>Sarah Johnson<br>Technical Support Team</p>
+                                    
+                                    <div style="margin-top: 1rem; padding: 0.75rem; background: rgba(0, 0, 0, 0.2); border-radius: 6px; font-size: 0.875rem;">
+                                        <i class="fas fa-info-circle"></i> 
+                                        <strong>Ticket Status Updated:</strong> In Progress • 
+                                        <strong>Assigned to:</strong> Technical Support • 
+                                        <strong>Priority:</strong> High
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Customer Reply -->
+                            <div class="message message-customer">
+                                <div class="message-header">
+                                    <div class="message-sender">
+                                        <i class="fas fa-user-circle"></i>
+                                        John Doe
+                                    </div>
+                                    <div class="message-time">January 15, 11:45 AM</div>
+                                </div>
+                                <div class="message-content">
+                                    <p>Hi Sarah,</p>
+                                    <p>Thanks for the quick response. Here are the details you requested:</p>
+                                    
+                                    <ul>
+                                        <li><strong>Affected pages:</strong> Homepage, product listing page, and checkout page</li>
+                                        <li><strong>Device:</strong> iPhone 13, iOS 17.2.1</li>
+                                        <li><strong>Other devices:</strong> Same issue on iPad (Safari) but works fine on Android Chrome</li>
+                                        <li><strong>Connection:</strong> Issue occurs on both WiFi and 5G mobile data</li>
+                                    </ul>
+                                    
+                                    <p>Additional observations:</p>
+                                    <ul>
+                                        <li>The issue seems worse after 2PM local time</li>
+                                        <li>JavaScript errors in console: "Uncaught TypeError"</li>
+                                        <li>Some images fail to load completely</li>
+                                    </ul>
+                                    
+                                    <p>Let me know if you need any other information. I've attached the console error logs.</p>
+                                    <br>
+                                    <p>Thanks,<br>John</p>
+                                    
+                                    <div style="margin-top: 1rem;">
+                                        <a href="#" class="attachment-preview">
+                                            <i class="fas fa-file-code"></i>
+                                            console-errors.txt
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- System Message: Status Update -->
+                            <div class="message message-system">
+                                <div class="message-time">2 hours ago</div>
+                                <div class="message-content">
+                                    <p><strong>Update from Support Team</strong></p>
+                                    <p>Our developers have identified the issue and are working on a fix. Estimated resolution time: 4-6 hours.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Add Reply Section -->
+                        <div style="margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid #1e4976;">
+                            <h4><i class="fas fa-reply"></i> Add to Conversation</h4>
+                            <p class="text-muted" style="margin-bottom: 1rem;">
+                                Your reply will be visible to the support team
+                            </p>
+                            
+                            <div class="form-group">
+                                <textarea id="customerReply" class="form-control" rows="4" placeholder="Type your message here..."></textarea>
+                                <div style="display: flex; justify-content: space-between; margin-top: 0.5rem;">
+                                    <small class="text-muted">Please be detailed and include any new information</small>
+                                    <small class="text-muted">Characters: <span id="replyCharCount">0</span></small>
+                                </div>
+                            </div>
+                            
+                            <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                                <button class="btn btn-primary" onclick="sendCustomerReply()">
+                                    <i class="fas fa-paper-plane"></i> Send Message
+                                </button>
+                                <button class="btn btn-outline" onclick="clearReply()">
+                                    <i class="fas fa-times"></i> Clear
+                                </button>
+                                <input type="file" id="fileAttachment" style="display: none;" onchange="handleFileSelect()">
+                                <button class="btn btn-outline" onclick="document.getElementById('fileAttachment').click()">
+                                    <i class="fas fa-paperclip"></i> Attach File
+                                </button>
+                            </div>
+                            
+                            <div id="filePreview" style="margin-top: 1rem;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Sidebar -->
+            <div class="ticket-sidebar">
+                <!-- Ticket Information -->
+                <div class="info-item">
+                    <h4 style="margin-bottom: 1rem; color: #69f0ae;">
+                        <i class="fas fa-info-circle"></i> Ticket Information
+                    </h4>
+                    
+                    <div>
+                        <span class="info-label">Ticket ID</span>
+                        <strong>TICKET-2024-001</strong>
+                    </div>
+                    
+                    <div style="margin-top: 1rem;">
+                        <span class="info-label">Priority</span>
+                        <span class="badge badge-danger">High Priority</span>
+                    </div>
+                    
+                    <div style="margin-top: 1rem;">
+                        <span class="info-label">Department</span>
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.25rem;">
+                            <i class="fas fa-users" style="color: #4fc3f7;"></i>
+                            Technical Support
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 1rem;">
+                        <span class="info-label">Assigned Agent</span>
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.25rem;">
+                            <i class="fas fa-user-shield" style="color: #69f0ae;"></i>
+                            Sarah Johnson
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Response Time -->
+                <div class="info-item">
+                    <h4 style="margin-bottom: 1rem; color: #69f0ae;">
+                        <i class="fas fa-clock"></i> Response Time
+                    </h4>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div>
+                            <span class="info-label">First Response</span>
+                            <div style="color: #81c784;">45 minutes</div>
+                        </div>
+                        <div>
+                            <span class="info-label">Avg Response</span>
+                            <div>2.1 hours</div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 1rem;">
+                        <div class="progress" style="height: 8px; background: #1e4976; border-radius: 4px; overflow: hidden;">
+                            <div style="width: 75%; height: 100%; background: #00c853; border-radius: 4px;"></div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.875rem; margin-top: 0.5rem;">
+                            <span>Within SLA</span>
+                            <span>75%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Related Tickets -->
+                <div class="info-item">
+                    <h4 style="margin-bottom: 1rem; color: #69f0ae;">
+                        <i class="fas fa-link"></i> Related Tickets
+                    </h4>
+                    
+                    <div style="font-size: 0.875rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <a href="#" style="color: #69f0ae;">TICKET-2024-002</a>
+                            <span class="badge badge-success" style="font-size: 0.75rem;">Resolved</span>
+                        </div>
+                        <div style="color: #90a4ae; margin-bottom: 0.75rem;">
+                            Mobile layout issues - Similar
+                        </div>
+                        
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <a href="#" style="color: #69f0ae;">TICKET-2023-999</a>
+                            <span class="badge badge-secondary" style="font-size: 0.75rem;">Closed</span>
+                        </div>
+                        <div style="color: #90a4ae;">
+                            Safari compatibility - Related
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feedback & Rating -->
+                <div class="info-item">
+                    <h4 style="margin-bottom: 1rem; color: #69f0ae;">
+                        <i class="fas fa-star"></i> Rate This Ticket
+                    </h4>
+                    
+                    <p style="font-size: 0.875rem; color: #90a4ae; margin-bottom: 1rem;">
+                        How would you rate the support received so far?
+                    </p>
+                    
+                    <div class="satisfaction-rating">
+                        <span class="star" data-rating="1">★</span>
+                        <span class="star" data-rating="2">★</span>
+                        <span class="star active" data-rating="3">★</span>
+                        <span class="star" data-rating="4">★</span>
+                        <span class="star" data-rating="5">★</span>
+                    </div>
+                    
+                    <div style="margin-top: 1rem;">
+                        <textarea id="feedbackText" class="form-control" rows="3" placeholder="Optional: Add detailed feedback..." style="font-size: 0.875rem;"></textarea>
+                        <button class="btn btn-outline" style="width: 100%; margin-top: 0.75rem; font-size: 0.875rem;" onclick="submitFeedback()">
+                            <i class="fas fa-paper-plane"></i> Submit Feedback
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="info-item">
+                    <h4 style="margin-bottom: 1rem; color: #69f0ae;">
+                        <i class="fas fa-external-link-alt"></i> Quick Links
+                    </h4>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <a href="#" class="btn btn-outline" style="text-align: left; font-size: 0.875rem;">
+                            <i class="fas fa-question-circle"></i> Help Center
+                        </a>
+                        <a href="create-ticket.html" class="btn btn-outline" style="text-align: left; font-size: 0.875rem;">
+                            <i class="fas fa-plus-circle"></i> Create New Ticket
+                        </a>
+                        <a href="view-tickets.html" class="btn btn-outline" style="text-align: left; font-size: 0.875rem;">
+                            <i class="fas fa-list"></i> View All Tickets
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div style="text-align: center;">
+                <p>&copy; 2024 Helport. All rights reserved.</p>
+                <p class="text-muted" style="font-size: 0.875rem;">
+                    <i class="fas fa-headset"></i> Support available 24/7
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Character counter for reply
+        document.addEventListener('DOMContentLoaded', function() {
+            const replyTextarea = document.getElementById('customerReply');
+            const charCount = document.getElementById('replyCharCount');
+            
+            if (replyTextarea && charCount) {
+                replyTextarea.addEventListener('input', function() {
+                    const count = this.value.length;
+                    charCount.textContent = count;
+                    
+                    // Update color based on length
+                    if (count < 10) {
+                        charCount.style.color = '#ff8a80';
+                    } else if (count < 50) {
+                        charCount.style.color = '#ffb74d';
+                    } else {
+                        charCount.style.color = '#81c784';
+                    }
+                });
+                
+                // Trigger initial count
+                replyTextarea.dispatchEvent(new Event('input'));
+            }
+            
+            // Star rating
+            const stars = document.querySelectorAll('.star');
+            stars.forEach(star => {
+                star.addEventListener('click', function() {
+                    const rating = parseInt(this.dataset.rating);
+                    
+                    // Update all stars
+                    stars.forEach(s => {
+                        if (parseInt(s.dataset.rating) <= rating) {
+                            s.classList.add('active');
+                        } else {
+                            s.classList.remove('active');
+                        }
+                    });
+                    
+                    // Show confirmation
+                    showAlert(`⭐ Rated ${rating} out of 5 stars`, 'success');
+                });
+            });
+            
+            // Load saved data
+            loadSavedData();
+        });
+        
+        function sendCustomerReply() {
+            const message = document.getElementById('customerReply').value.trim();
+            if (!message) {
+                showAlert('Please enter a message', 'danger');
+                return;
+            }
+            
+            // Get current time
+            const now = new Date();
+            const timeString = now.toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            // Create new message element
+            const thread = document.querySelector('.conversation-thread');
+            const newMessage = document.createElement('div');
+            newMessage.className = 'message message-customer';
+            newMessage.innerHTML = `
+                <div class="message-header">
+                    <div class="message-sender">
+                        <i class="fas fa-user-circle"></i>
+                        John Doe
+                    </div>
+                    <div class="message-time">${timeString}</div>
+                </div>
+                <div class="message-content">
+                    <p>${message.replace(/\n/g, '<br>')}</p>
+                    ${getFilePreviewHTML()}
+                </div>
+            `;
+            
+            // Add to thread
+            thread.appendChild(newMessage);
+            
+            // Clear form
+            clearReply();
+            
+            // Show success message
+            showAlert('Message sent successfully!', 'success');
+            
+            // Add system message
+            setTimeout(() => {
+                const systemMessage = document.createElement('div');
+                systemMessage.className = 'message message-system';
+                systemMessage.innerHTML = `
+                    <div class="message-time">Just now</div>
+                    <div class="message-content">
+                        <p><strong>Message received</strong></p>
+                        <p>Support team has been notified of your update</p>
+                    </div>
+                `;
+                thread.appendChild(systemMessage);
+                systemMessage.scrollIntoView({ behavior: 'smooth' });
+            }, 1000);
+            
+            // Scroll to new message
+            newMessage.scrollIntoView({ behavior: 'smooth' });
+            
+            // Save to localStorage
+            saveReplyToHistory(message);
+        }
+        
+        function clearReply() {
+            document.getElementById('customerReply').value = '';
+            document.getElementById('filePreview').innerHTML = '';
+            document.getElementById('replyCharCount').textContent = '0';
+            document.getElementById('replyCharCount').style.color = '';
+        }
+        
+        function handleFileSelect() {
+            const fileInput = document.getElementById('fileAttachment');
+            const filePreview = document.getElementById('filePreview');
+            
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                filePreview.innerHTML = `
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem; background: rgba(255, 255, 255, 0.05); border-radius: 8px; border: 1px solid #1e4976;">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <i class="fas fa-file" style="color: #69f0ae;"></i>
+                            <div>
+                                <div style="font-weight: 500;">${file.name}</div>
+                                <div style="font-size: 0.875rem; color: #90a4ae;">
+                                    ${formatFileSize(file.size)}
+                                </div>
+                            </div>
+                        </div>
+                        <button onclick="removeAttachment()" style="background: none; border: none; color: #ff8a80; cursor: pointer;">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `;
+            }
+        }
+        
+        function getFilePreviewHTML() {
+            const filePreview = document.getElementById('filePreview').innerHTML;
+            if (filePreview) {
+                return '<div style="margin-top: 1rem;">' + filePreview + '</div>';
+            }
+            return '';
+        }
+        
+        function removeAttachment() {
+            document.getElementById('filePreview').innerHTML = '';
+            document.getElementById('fileAttachment').value = '';
+        }
+        
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        function requestUpdate() {
+            showAlert('📨 Update request sent to support team', 'info');
+            
+            // Add system message
+            const thread = document.querySelector('.conversation-thread');
+            const systemMessage = document.createElement('div');
+            systemMessage.className = 'message message-system';
+            systemMessage.innerHTML = `
+                <div class="message-time">Just now</div>
+                <div class="message-content">
+                    <p><strong>Update requested</strong></p>
+                    <p>You have requested an update on this ticket. Support team will respond shortly.</p>
+                </div>
+            `;
+            thread.appendChild(systemMessage);
+            systemMessage.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        function addAttachment() {
+            document.getElementById('fileAttachment').click();
+        }
+        
+        function escalateTicket() {
+            if (confirm('Are you sure you want to escalate this ticket? This will notify supervisors.')) {
+                showAlert('⚠️ Ticket escalated to supervisor', 'warning');
+            }
+        }
+        
+        function shareTicket() {
+            const ticketUrl = window.location.href;
+            navigator.clipboard.writeText(ticketUrl).then(() => {
+                showAlert('📋 Ticket link copied to clipboard', 'success');
+            });
+        }
+        
+        function provideFeedback() {
+            document.querySelector('.satisfaction-rating').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        function submitFeedback() {
+            const rating = document.querySelectorAll('.star.active').length;
+            const feedback = document.getElementById('feedbackText').value.trim();
+            
+            if (rating === 0) {
+                showAlert('Please select a rating', 'danger');
+                return;
+            }
+            
+            showAlert(`✅ Thank you for your ${rating}-star feedback!`, 'success');
+            
+            // Clear form
+            document.getElementById('feedbackText').value = '';
+            document.querySelectorAll('.star').forEach(star => star.classList.remove('active'));
+            
+            // Save feedback
+            localStorage.setItem('ticketFeedback', JSON.stringify({
+                ticketId: 'TICKET-2024-001',
+                rating: rating,
+                feedback: feedback,
+                date: new Date().toISOString()
+            }));
+        }
+        
+        function printTicket() {
+            window.print();
+        }
+        
+        function saveReplyToHistory(message) {
+            const replies = JSON.parse(localStorage.getItem('ticketReplies') || '[]');
+            replies.push({
+                ticketId: 'TICKET-2024-001',
+                message: message,
+                timestamp: new Date().toISOString()
+            });
+            localStorage.setItem('ticketReplies', JSON.stringify(replies));
+        }
+        
+        function loadSavedData() {
+            // Load saved feedback
+            const savedFeedback = localStorage.getItem('ticketFeedback');
+            if (savedFeedback) {
+                const feedback = JSON.parse(savedFeedback);
+                if (feedback.ticketId === 'TICKET-2024-001') {
+                    // Apply saved rating
+                    const stars = document.querySelectorAll('.star');
+                    stars.forEach(star => {
+                        if (parseInt(star.dataset.rating) <= feedback.rating) {
+                            star.classList.add('active');
+                        }
+                    });
+                    
+                    // Load feedback text
+                    if (feedback.feedback) {
+                        document.getElementById('feedbackText').value = feedback.feedback;
+                    }
+                }
+            }
+            
+            // Load saved replies
+            const savedReplies = JSON.parse(localStorage.getItem('ticketReplies') || '[]');
+            savedReplies.forEach(reply => {
+                if (reply.ticketId === 'TICKET-2024-001') {
+                    // Note: In a real app, these would be loaded from server
+                }
+            });
+        }
+        
+        function showAlert(message, type) {
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.innerHTML = message;
+            alert.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                z-index: 9999;
+                min-width: 300px;
+                max-width: 400px;
+                animation: slideIn 0.3s ease;
+            `;
+            
+            document.body.appendChild(alert);
+            
+            setTimeout(() => {
+                alert.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => alert.remove(), 300);
+            }, 3000);
+        }
+        
+        // Add CSS for animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+            
+            @keyframes slideOut {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
